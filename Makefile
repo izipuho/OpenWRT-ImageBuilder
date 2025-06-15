@@ -56,7 +56,7 @@ imagebuilder: ${BUILDDIR}/${imagebuilder}
 ${BUILDDIR}/${imagebuilder}: ${CACHE}/${imagebuilder}.tar.zst ${BUILDDIR}
 	tar --touch -C ${BUILDDIR} -xf $<
 
-${CACHE}/${imagebuilder}.tar.xz: | ${CACHE}
+${CACHE}/${imagebuilder}.tar.zst: | ${CACHE}
 	curl --remote-name --continue-at - --output-dir $| ${DOWNLOADS_BASE}/${@F}
 
 image: $C/${image}
