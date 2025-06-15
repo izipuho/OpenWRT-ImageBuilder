@@ -21,7 +21,8 @@ DEPS += $(shell find ${files} -type f,l)
 DEPS += $(shell [ -d $C/files ] && find $C/files -type f,l)
 DEPS += ${CONFIGS}
 
-HOSTS ?= $C
+HOST  ?=
+OHOSTS := $(if $(HOST),$(HOST),$(HOSTS))
 SCPOPTS = -O
 
 IMAGE ?= squashfs-sysupgrade.bin
@@ -52,7 +53,7 @@ ${BUILDDIR}:
 
 imagebuilder: ${BUILDDIR}/${imagebuilder}
 
-${BUILDDIR}/${imagebuilder}: ${CACHE}/${imagebuilder}.tar.xz ${BUILDDIR}
+${BUILDDIR}/${imagebuilder}: ${CACHE}/${imagebuilder}.tar.zst ${BUILDDIR}
 	tar --touch -C ${BUILDDIR} -xf $<
 
 ${CACHE}/${imagebuilder}.tar.xz: | ${CACHE}
@@ -84,13 +85,13 @@ else
 endif
 
 copy: $C/${image}
-	$(foreach h,${HOSTS}, \
-		scp ${SCPOPTS} $< $h:/tmp & \
+	$(foreach h,${OHOSTS}, \
+		scp ${SCPOPTS} $< root@$h:/tmp & \
 	)
 
 install: $C/${image}
-	$(foreach h,${HOSTS}, ( \
-		scp ${SCPOPTS} $< $h:/tmp && \
+	$(foreach h,${OHOSTS}, ( \
+		scp ${SCPOPTS} $< root@$h:/tmp && \
 		ssh $h sysupgrade -v /tmp/${image} \
 	)& )
 
