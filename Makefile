@@ -86,13 +86,13 @@ endif
 
 copy: $C/${image}
 	$(foreach h,${OHOSTS}, \
-		scp ${SCPOPTS} $< root@$h:/tmp & \
+		scp ${SCPOPTS} $< root@$h:/tmp/owrt.bin & \
 	)
 
 install: $C/${image}
 	$(foreach h,${OHOSTS}, ( \
-		scp ${SCPOPTS} $< root@$h:/tmp && \
-		ssh $h sysupgrade -v /tmp/${image} \
+		scp ${SCPOPTS} $< root@$h:/tmp/owrt.bin && \
+		ssh $h sysupgrade -v /tmp/owrt.bin \
 	)& )
 
 .PHONY: copy listpks image
